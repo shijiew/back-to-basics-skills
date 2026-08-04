@@ -1,0 +1,31 @@
+{
+  "name": "back-to-basics-skills",
+  "id": "back-to-basics-skills",
+  "owner": {
+    "name": "shijiew"
+  },
+  "metadata": {
+    "description": "Agent-system design guidelines derived from Shijie Wang's \"Back to Basics: A Philosophy for Agent System Design\"",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "back-to-basics",
+      "source": "./",
+      "description": "Use when designing, reviewing, simplifying, or diagnosing agent systems or harnesses; deciding whether to add agent-level memory, planners, critics, orchestration, retrieval, tools, guardrails, or reasoning effort; comparing single- and multi-agent designs; or re-auditing architecture after a model upgrade.",
+      "version": "1.0.0",
+      "author": {
+        "name": "shijiew"
+      },
+      "keywords": [
+        "agents",
+        "agent-design",
+        "harness",
+        "architecture",
+        "evals",
+        "multi-agent"
+      ],
+      "category": "workflow"
+    }
+  ]
+}

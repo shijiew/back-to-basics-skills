@@ -1,0 +1,18 @@
+{
+  "name": "back-to-basics",
+  "description": "Use when designing, reviewing, simplifying, or diagnosing agent systems or harnesses; deciding whether to add agent-level memory, planners, critics, orchestration, retrieval, tools, guardrails, or reasoning effort; comparing single- and multi-agent designs; or re-auditing architecture after a model upgrade.",
+  "version": "1.0.0",
+  "author": {
+    "name": "shijiew"
+  },
+  "license": "MIT",
+  "keywords": [
+    "agents",
+    "agent-design",
+    "harness",
+    "architecture",
+    "evals",
+    "multi-agent"
+  ],
+  "skills": ["./skills/back-to-basics"]
+}
