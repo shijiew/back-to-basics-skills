@@ -31,9 +31,20 @@ The skill was judged by what agents built under it actually do, not by opinion. 
 ### Quality
 
 ```mermaid
+---
+config:
+    xyChart:
+        width: 560
+        height: 320
+        showDataLabel: true
+    themeVariables:
+        xyChart:
+            plotColorPalette: "#2563eb"
+            dataLabelColor: "#ffffff"
+---
 xychart-beta
-    title "Mean reward on 12 held-out Terminal-Bench 2.1 tasks (108 runs)"
-    x-axis ["No skill", "Minimal profile", "Quality-first profile"]
+    title "Mean reward on held-out Terminal-Bench 2.1 tasks"
+    x-axis ["No skill", "Minimal", "Quality-first"]
     y-axis "Mean reward" 0 --> 0.5
     bar [0.250, 0.306, 0.472]
 ```
@@ -45,9 +56,21 @@ xychart-beta
 ### Simplicity and efficiency (minimal profile)
 
 ```mermaid
+---
+config:
+    xyChart:
+        width: 560
+        height: 320
+        chartOrientation: horizontal
+        showDataLabel: true
+    themeVariables:
+        xyChart:
+            plotColorPalette: "#059669"
+            dataLabelColor: "#ffffff"
+---
 xychart-beta
-    title "Footprint of the built agent, relative to no skill = 100"
-    x-axis ["Code size", "Cyclomatic complexity", "Tokens per task"]
+    title "Built-agent footprint (no skill = 100)"
+    x-axis ["Code size", "Complexity", "Tokens per task"]
     y-axis "Percent of no-skill baseline" 0 --> 100
     bar [61, 40, 50]
 ```

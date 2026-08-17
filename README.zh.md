@@ -31,8 +31,19 @@
 ### 质量
 
 ```mermaid
+---
+config:
+    xyChart:
+        width: 560
+        height: 320
+        showDataLabel: true
+    themeVariables:
+        xyChart:
+            plotColorPalette: "#2563eb"
+            dataLabelColor: "#ffffff"
+---
 xychart-beta
-    title "12 个 Terminal-Bench 2.1 留出任务的平均 reward（共运行 108 次）"
+    title "Terminal-Bench 2.1 留出任务的平均 reward"
     x-axis ["无 skill", "极简版", "质量优先版"]
     y-axis "平均 reward" 0 --> 0.5
     bar [0.250, 0.306, 0.472]
@@ -45,8 +56,20 @@ xychart-beta
 ### 简洁性与效率（极简版）
 
 ```mermaid
+---
+config:
+    xyChart:
+        width: 560
+        height: 320
+        chartOrientation: horizontal
+        showDataLabel: true
+    themeVariables:
+        xyChart:
+            plotColorPalette: "#059669"
+            dataLabelColor: "#ffffff"
+---
 xychart-beta
-    title "构建出的 agent 的体量（无 skill 基线记为 100）"
+    title "构建出的 agent 体量（无 skill = 100）"
     x-axis ["代码规模", "圈复杂度", "单任务 token"]
     y-axis "相对无 skill 基线的百分比" 0 --> 100
     bar [61, 40, 50]
