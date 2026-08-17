@@ -1,118 +1,76 @@
-# Back to Basics: Agent System Design Guide
+# Back to Basics: Agent System Design Skill
 
-A single-file behavioral skill for designing, reviewing, and simplifying agent systems.
+A compact set of direct statements that changes how an agent designs agent systems.
 
 > **Agent system design is the art of reducing system entropy.**
-> **Every layer must remove more uncertainty than it introduces.**
 
 Derived from Shijie Wang's [Back to Basics: A Philosophy for Agent System Design](https://x.com/shijiew_/status/2082495518484107415).
 
 English | [简体中文](./README.zh.md)
 
-## The Problem
-
-Agent engineering spent several years adding. More context. More tools. More skills. More loops. More agents. More orchestration. Each layer was added for a real reason — models were unreliable, context windows were small, tool use was fragile. Very little of it has ever been removed.
-
-The result is that most agent systems cannot answer a short list of questions about themselves:
-
-- What uncertainty does this component remove?
-- Did it remove more than it introduced?
-- Was it written for a model that still exists?
-- What is the model deciding here, and what is the code guaranteeing?
-- Is this something the system should be doing at all?
-
-Meanwhile the failure is asymmetric. Under-scaffolding fails visibly, through unreliable behavior. Over-scaffolding looks like mature engineering while failing through latency, duplicated reasoning, brittle coordination, and architectures nobody can debug. Both sides are failure modes. Only one of them looks like one.
-
 ## The Skill
 
-Six principles in one file:
+The skill comes in two profiles. Both use a short, flat block of direct statements by design.
 
-| Principle | Corrects |
-|---|---|
-| **Model and Harness Are One System** | Evaluating a layer without the model it serves; crediting wins to the harness and losses to the model |
-| **Start From the Bare Baseline** | Starting from a framework's maximum architecture instead of the intended model and operating constraints |
-| **Make Every Layer Pay Rent** | Layers that sound sophisticated but never name what they remove |
-| **Compress, Don't Coordinate** | Relocating ambiguity across more agents, roles, and retries instead of reducing it |
-| **The Model Owns How, the Harness Owns What** | Confusing minimalism with deleting guardrails, and keeping "how to think" rules written for weaker models |
-| **Prove It With a Living Eval** | Intuition instead of ablation; benchmark points instead of useful output per unit of time |
+**Minimal profile** — [`skills/back-to-basics/SKILL.md`](skills/back-to-basics/SKILL.md). Prefer this when cost and simplicity matter most.
 
-Plus an uncertainty map (model, context, state, execution, coordination, verification) that requires naming where a failure came from before proposing a mechanism for it.
+> Agent system design is the art of reducing system entropy.
+>
+> Add a part only when its absence provably blocks the task; usefulness is not necessity.
+>
+> Every dependency imports its own disorder; the standard library is the lowest-entropy dependency.
 
-Read it: [`skills/back-to-basics/SKILL.md`](skills/back-to-basics/SKILL.md).
+**Quality-first profile** — [`skills/back-to-basics/SKILL_max.md`](skills/back-to-basics/SKILL_max.md). The same three sentences plus one more. Prefer this when correctness matters more than minimal footprint.
 
-## The Six Principles Explained
+> Expect any reply from an external system to arrive as a string, a list of parts, or empty; one small normalization where it enters is cheaper than defenses everywhere.
 
-### 1. Model and Harness Are One System
+## Measured Results
 
-**Never evaluate a layer apart from the model it serves.**
+The skill was judged by what agents built under it actually do, not by opinion. In each trial, a builder agent received one skill variant and designed and implemented a working coding agent from scratch. The resulting agents then completed benchmark tasks they had never seen, scored by the benchmarks' own verifiers. All headline results are paired comparisons on held-out tasks that were never used during development.
 
-The system = model + prompt + context + tools + state + controls.
+### Quality
 
-"The model cannot do X" and "our harness fixes X" are both unverified claims. Verify either by comparing the system with and without the layer. Do not attribute successes to the harness and failures to the model. When the model changes, re-establish the baseline; existing scaffolding may no longer help.
+```mermaid
+xychart-beta
+    title "Mean reward on 12 held-out Terminal-Bench 2.1 tasks (108 runs)"
+    x-axis ["No skill", "Minimal profile", "Quality-first profile"]
+    y-axis "Mean reward" 0 --> 0.5
+    bar [0.250, 0.306, 0.472]
+```
 
-### 2. Start From the Bare Baseline
+**Quality-first profile: +0.222 mean reward over no skill (0.472 vs 0.250, roughly 1.9x), 95% CI [0.034, 0.410], statistically significant.** Out of 28 variants tested across the whole program, it is the only one that beat no-skill on quality with a confidence interval excluding zero on unseen tasks.
 
-**Begin with the strongest model and the simplest loop.**
+**Minimal profile: quality parity.** On a separate 12-task holdout, it scored 0.417 vs 0.375 without the skill (+0.042, 95% CI [−0.087, +0.170] — no statistically significant difference). Its value is not higher quality, but the simplicity and cost gains below without sacrificing correctness.
 
-The baseline = one clear prompt, required context, direct tools, one loop.
+### Simplicity and efficiency (minimal profile)
 
-Run it on real work and record where it fails. Add one layer per observed failure, then measure its effect. Never run a bare baseline against live or irreversible work; use replay or a sandbox.
+```mermaid
+xychart-beta
+    title "Footprint of the built agent, relative to no skill = 100"
+    x-axis ["Code size", "Cyclomatic complexity", "Tokens per task"]
+    y-axis "Percent of no-skill baseline" 0 --> 100
+    bar [61, 40, 50]
+```
 
-Escalate only as far as the observed failure requires: no graph when a loop is sufficient; no loop when a single tool call is sufficient; no tool call when a single response is sufficient.
+Agents built under the minimal profile were:
 
-### 3. Make Every Layer Pay Rent
+- **~40% smaller** — 153 lines of code vs ~250 without the skill;
+- **~60% less complex** — cyclomatic complexity 21 vs 53;
+- **~2x cheaper to run** — about half the tokens per task.
 
-**State the uncertainty a layer removes and the cost it adds.**
+### How the sentences were selected
 
-Ask of each layer:
+- 25 candidate sentences were tested one at a time against preregistered thresholds; **4 survived** (16% acceptance). 3 alternative formats were tested; **0 survived**.
+- The strongest single finding concerns format: reorganizing the exact same sentences under section headings dropped the pass rate from 0.591 to 0.455 on the development pool and produced a larger agent.
+- The predecessor of this skill — the eight-section edition this repository previously shipped — was a statistical dead tie with no skill on quality while costing ~24% more runtime. That is why it was replaced.
 
-- Which observed failure does it address? A hypothetical failure is not sufficient.
-- Which uncertainty does it remove?
-- What does it cost in latency, tokens, hidden state, and maintenance?
-- Could a better prompt, tool, or context achieve the same result?
-- Which metric will decide whether it is retained?
+### Scope
 
-A layer that cannot answer these questions is a candidate for removal. Audit combinations too: retrieval and planning are each defensible, and together they can produce a confident plan built on stale documents.
+All results come from one agent and model stack, with 12 paired tasks in each holdout. Whether the results transfer to other stacks remains untested.
 
-### 4. Compress, Don't Coordinate
+## Why It Is This Short
 
-**A good harness compresses complexity. A poor one relocates it.**
-
-- Prefer one model with better context and tools over additional agents.
-- Add an agent only for isolation, parallelism, specialization, or independent verification.
-- Prefer explicit state over conversational handoffs.
-- Prefer one outcome check over repeated self-critique; bound the correction loop.
-- Memory must change a later decision. Select it, compress it, expire it.
-- Allow the model to plan. Do not have planner, worker, and critic calls re-derive the same reasoning.
-
-The test: has the decision become simpler, or has the same ambiguity been distributed across more components?
-
-### 5. The Model Owns How, the Harness Owns What
-
-**The model chooses how to reason. The harness defines the task, the limits, and the pass criteria.**
-
-- Remove cognitive scaffolding as models improve: forced planning, reflection, critics, debate.
-- Retain the boundaries: permissions, sandboxes, cost limits, approvals, and tests.
-- A test converts an expensive judgment into an inexpensive fact.
-- A stronger model raises the pass rate. It does not remove the need for the test.
-- Match each guardrail to the severity of the outcome it prevents. Excessive gates stall legitimate work; insufficient gates permit irreversible errors.
-- Never remove a control that policy or law requires.
-- An audit log that no one reads remains a candidate for removal. Identify its consumer.
-
-The test: could a stronger model reach this conclusion unaided? If so, it is cognitive scaffolding and can be removed. If not, it is a boundary and should be retained.
-
-### 6. Prove It With a Living Eval
-
-**Without evaluation, minimalism is a preference rather than an engineering decision.**
-
-- In an existing system, remove one layer at a time and re-run the evaluation.
-- Measure cost as well: latency, tokens, tool calls, approvals, and interventions.
-- The objective is useful output per unit of time, not a benchmark score.
-- A small benchmark gain does not justify doubled latency or an undebuggable system.
-- After a model upgrade, re-run the baseline and the ablations.
-- When measurements are unavailable, say so and name the cheapest decisive test.
-
-An evaluation reveals what to add. It also reveals what can now be removed.
+Every sentence above earned its place through the testing described in Measured Results; all other candidates were tested and rejected. The format finding leads to one practical instruction: agents absorb a short block of direct statements as binding constraints, but tend to treat sectioned documents as reference material. **Use the skill as-is.** When merging it into project files, do not expand it, reorganize it under headings, or convert it into bullets or checklists.
 
 ## Install
 
@@ -128,7 +86,7 @@ Then install the plugin:
 /plugin install back-to-basics@back-to-basics-skills
 ```
 
-This installs the guidance as a Claude Code plugin, making the skill available across all your projects.
+The plugin ships the minimal profile. For the quality-first profile, use a file-based option below with `SKILL_max.md`, or replace the installed `SKILL.md` body with the four quality-first sentences.
 
 **Option B: CLAUDE.md (per-project, Claude Code)**
 
@@ -145,7 +103,7 @@ curl https://raw.githubusercontent.com/shijiew/back-to-basics-skills/main/CLAUDE
 
 **Option C: AGENTS.md (per-project, Codex and other compatible tools)**
 
-Tools that automatically load `AGENTS.md` will apply this guidance to every task. Use this option only when you want always-on guidance. For selective loading, prefer the plugin or Cursor rule.
+Tools that automatically load `AGENTS.md` will apply this guidance to every task.
 
 New project:
 ```bash
@@ -172,40 +130,26 @@ Choose one project-level mechanism. Installing equivalent guidance through `AGEN
 
 ## When It Applies
 
-Designing, reviewing, simplifying, or diagnosing an agent system or harness; deciding whether to add agent-level memory, planners, critics, orchestration, retrieval, tools, guardrails, or reasoning effort; comparing single- and multi-agent designs; or re-auditing architecture after a model upgrade.
-
-It is intended for selective loading. Prompt length is not the criterion: short architecture questions may need it, while long implementation tasks may not. When no architecture judgment is needed, answer directly.
-
-## What It Is Not
-
-The skill is not anti-harness, anti-planning, anti-memory, or anti-multi-agent. It rejects components without a testable role while preserving non-negotiable risk and policy controls.
-
-Externally imposed cognitive stages — mandatory planning phases, forced reflection, role-play critics — should be re-audited as models improve. Operational scaffolding — permissions, sandboxes, deterministic rules, audit, recovery, and cost limits — is justified by risk or evidence, and better reasoning does not make a permission check unnecessary.
-
-## Examples
-
-[`EXAMPLES.md`](EXAMPLES.md) contains seven use cases showing common agent-system anti-patterns and simpler, testable alternatives.
+Architecting, building, or reviewing an agent system, a harness, or any long-running automated pipeline.
 
 ## Repository Layout
 
 ```text
-skills/back-to-basics/SKILL.md   canonical skill
-AGENTS.md                        drop-in copy for AGENTS.md-based tools
-CLAUDE.md                        per-project Claude Code instructions
-.cursor/rules/back-to-basics.mdc drop-in copy for Cursor
-.claude-plugin/                  Claude Code plugin manifest
-CURSOR.md                        Cursor installation and usage
-EXAMPLES.md                      use cases and anti-patterns
-README.zh.md                     Simplified Chinese README
+skills/back-to-basics/SKILL.md      canonical skill, minimal profile
+skills/back-to-basics/SKILL_max.md  quality-first profile
+AGENTS.md                           drop-in copy for AGENTS.md-based tools
+CLAUDE.md                           per-project Claude Code instructions
+.cursor/rules/back-to-basics.mdc    drop-in copy for Cursor
+.claude-plugin/                     Claude Code plugin manifest
+CURSOR.md                           Cursor installation and usage
+README.zh.md                        Simplified Chinese README
 ```
 
-`SKILL.md` is the source of truth. `AGENTS.md`, `CLAUDE.md`, and the `.mdc` rule contain the same guidance for different installation paths; update all four together.
+`SKILL.md` is the source of truth. `AGENTS.md`, `CLAUDE.md`, and the `.mdc` rule carry the same body for different installation paths; update them together.
 
 ## Customization
 
-These guidelines are designed to merge with project-specific instructions. Add them to your existing project instruction file — `AGENTS.md` or `CLAUDE.md` — or create a new one.
-
-For project-specific rules, add a section like:
+The skill merges cleanly with project-specific instructions: keep its sentences together as one flat block and add your project rules after it.
 
 ```markdown
 ## Project-Specific Guidelines
@@ -215,19 +159,13 @@ For project-specific rules, add a section like:
 - Follow the error handling patterns in `src/utils/errors.ts`
 ```
 
+Do not fold the skill's sentences into your own sections; reformatting them weakens their effect.
+
 ## Attribution
 
 Core ideas are derived from Shijie Wang's ["Back to Basics: A Philosophy for Agent System Design"](https://x.com/shijiew_/status/2082495518484107415).
 
 The single-file, behavioral-guideline packaging pattern is inspired by [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills). Andrej Karpathy neither authored nor endorsed this skill, and no content is copied from that repository.
-
-## Core Insight
-
-> Back to basics does not mean building less. It means being able to say what every part of the system is there for.
-
-The graph you never drew leaves no trace in production and none in the eval. Nothing reminds you of the complexity you did not build.
-
-The goal is not the fewest components. It is the smallest system that reliably satisfies the task and its constraints.
 
 ## License
 

@@ -1,6 +1,6 @@
 # Using This Repository With Cursor
 
-This repository includes a **Cursor project rule** that makes the Back to Basics guidance available for relevant agent-system architecture tasks.
+This repository includes a **Cursor project rule** that makes the Back to Basics skill available for relevant agent-system architecture tasks.
 
 ## In This Repository
 
@@ -21,9 +21,11 @@ curl -o .cursor/rules/back-to-basics.mdc \
   https://raw.githubusercontent.com/shijiew/back-to-basics-skills/main/.cursor/rules/back-to-basics.mdc
 ```
 
-**AGENTS.md-compatible tools:** Copy [`AGENTS.md`](AGENTS.md) into the project root or merge it with existing instructions.
+**AGENTS.md-compatible tools:** Copy [`AGENTS.md`](AGENTS.md) into the project root or merge it with existing instructions. When merging, keep the skill's sentences together as one flat block; do not reorganize them under headings or into lists.
 
 **Claude Code:** Install the plugin using the [`README.md`](README.md) instructions, or copy [`CLAUDE.md`](CLAUDE.md) into the project root.
+
+All drop-in files carry the minimal profile. For the quality-first profile, substitute the body of [`skills/back-to-basics/SKILL_max.md`](skills/back-to-basics/SKILL_max.md).
 
 ## Optional Personal Agent Skill
 
@@ -48,9 +50,11 @@ See the official [Cursor rules reference](https://cursor.com/docs/rules.md) and 
 
 [`skills/back-to-basics/SKILL.md`](skills/back-to-basics/SKILL.md) is the source of truth.
 
+The skill body is intentionally a short block of flat sentences. Every sentence earned its place through testing, and reformatting the same content under headings measured worse. Do not add sections, bullets, or checklists to the skill body.
+
 When the guidance changes:
 
-1. Update `SKILL.md`.
+1. Update `SKILL.md` (and [`skills/back-to-basics/SKILL_max.md`](skills/back-to-basics/SKILL_max.md) if the shared sentences changed).
 2. Synchronize [`AGENTS.md`](AGENTS.md), [`CLAUDE.md`](CLAUDE.md), and [`.cursor/rules/back-to-basics.mdc`](.cursor/rules/back-to-basics.mdc).
 3. Keep the routing description aligned in the skill frontmatter, Cursor rule, and Claude plugin metadata.
-4. Re-run the relevant behavioral probes before publishing.
+4. Validate any content change experimentally before publishing; wording changes are behavior changes.
